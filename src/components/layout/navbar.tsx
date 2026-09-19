@@ -13,6 +13,8 @@ const links = [
   { href: "#contact", label: "Contacto" },
 ]
 
+const quickActions = ["Tracking", "Tarifario"]
+
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -72,7 +74,7 @@ export function Navbar() {
             />
           </motion.a>
 
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+          <div className="hidden xl:flex items-center gap-4 2xl:gap-6">
             {links.map((link) => (
               <a
                 key={link.href}
@@ -85,6 +87,24 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <div className="flex items-center gap-2">
+              {quickActions.map((action) => (
+                <button
+                  key={action}
+                  type="button"
+                  disabled
+                  title={`${action}: próximamente`}
+                  className={cn(
+                    "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-75",
+                    scrolled
+                      ? "border-brand-200 bg-brand-50 text-brand-700"
+                      : "border-white/35 bg-white/10 text-white"
+                  )}
+                >
+                  {action}
+                </button>
+              ))}
+            </div>
             <a
               href="#contact"
               className={cn(
@@ -105,7 +125,7 @@ export function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-navigation"
             className={cn(
-              "lg:hidden flex h-11 w-11 items-center justify-center rounded-lg",
+              "xl:hidden flex h-11 w-11 items-center justify-center rounded-lg",
               scrolled ? "text-gray-900" : "text-white"
             )}
           >
@@ -121,7 +141,7 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             id="mobile-navigation"
-            className="lg:hidden bg-white border-t border-gray-200 overflow-hidden"
+            className="xl:hidden bg-white border-t border-gray-200 overflow-hidden"
           >
             <div className="max-h-[calc(100svh-4rem)] overflow-y-auto px-4 py-4 space-y-1">
               {links.map((link) => (
@@ -134,6 +154,19 @@ export function Navbar() {
                   {link.label}
                 </a>
               ))}
+              <div className="grid grid-cols-2 gap-2 px-3 pt-2">
+                {quickActions.map((action) => (
+                  <button
+                    key={action}
+                    type="button"
+                    disabled
+                    title={`${action}: próximamente`}
+                    className="min-h-11 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 disabled:cursor-not-allowed"
+                  >
+                    {action}
+                  </button>
+                ))}
+              </div>
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
