@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/navbar"
 import { Hero } from "@/components/sections/hero"
+import { Tracking } from "@/components/sections/tracking"
 import { Services } from "@/components/sections/services"
 import { Process } from "@/components/sections/process"
 import { Coverage } from "@/components/sections/coverage"
@@ -15,6 +16,7 @@ export default function App() {
         <Navbar />
         <Hero />
         <main>
+          <Tracking />
           <Services />
           <Process />
           <Coverage />

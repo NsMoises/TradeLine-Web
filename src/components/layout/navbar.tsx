@@ -88,22 +88,12 @@ export function Navbar() {
               </a>
             ))}
             <div className="flex items-center gap-2">
-              {quickActions.map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  disabled
-                  title={`${action}: próximamente`}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-75",
-                    scrolled
-                      ? "border-brand-200 bg-brand-50 text-brand-700"
-                      : "border-white/35 bg-white/10 text-white"
-                  )}
-                >
-                  {action}
-                </button>
-              ))}
+              <a href="#tracking" className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors hover:scale-105", scrolled ? "border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100" : "border-white/35 bg-white/10 text-white hover:bg-white/20")}>
+                {quickActions[0]}
+              </a>
+              <button type="button" disabled title="Tarifario: próximamente" className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-75", scrolled ? "border-brand-200 bg-brand-50 text-brand-700" : "border-white/35 bg-white/10 text-white")}>
+                {quickActions[1]}
+              </button>
             </div>
             <a
               href="#contact"
@@ -155,17 +145,12 @@ export function Navbar() {
                 </a>
               ))}
               <div className="grid grid-cols-2 gap-2 px-3 pt-2">
-                {quickActions.map((action) => (
-                  <button
-                    key={action}
-                    type="button"
-                    disabled
-                    title={`${action}: próximamente`}
-                    className="min-h-11 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 disabled:cursor-not-allowed"
-                  >
-                    {action}
-                  </button>
-                ))}
+                <a href="#tracking" onClick={() => setOpen(false)} className="flex min-h-11 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">
+                  {quickActions[0]}
+                </a>
+                <button type="button" disabled title="Tarifario: próximamente" className="min-h-11 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 disabled:cursor-not-allowed">
+                  {quickActions[1]}
+                </button>
               </div>
               <a
                 href="#contact"
