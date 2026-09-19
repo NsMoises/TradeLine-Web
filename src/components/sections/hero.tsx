@@ -34,7 +34,7 @@ export function Hero() {
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1, ease: "easeOut" }} className="break-words text-4xl font-bold font-heading leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-            Logística internacional <span className="text-cyan-300">desde Perú</span>
+            TradeLine - Logística internacional <span className="text-cyan-300">desde Perú</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.2, ease: "easeOut" }} className="mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:mt-6 sm:text-xl">
