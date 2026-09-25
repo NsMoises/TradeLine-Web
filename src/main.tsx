@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/terminos" element={<TermsPage />} />
         <Route path="*" element={<App />} />
       </Routes>
-      <Analytics />
+      {import.meta.env.VITE_VERCEL_ANALYTICS === 'true' && <Analytics />}
     </BrowserRouter>
   </StrictMode>,
 )

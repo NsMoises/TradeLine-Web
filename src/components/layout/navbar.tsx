@@ -1,7 +1,8 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import type { MouseEvent } from "react"
 import { cn } from "@/lib/utils"
 import { Menu, X } from "lucide-react"
 
@@ -19,6 +20,27 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const pendingSection = useRef<string | null>(null)
+
+  const scrollToSection = (href: string) => {
+    const section = href === "#" ? document.body : document.getElementById(href.slice(1))
+    if (!section) return
+    const top = href === "#" ? 0 : section.getBoundingClientRect().top + window.scrollY - 88
+    window.history.pushState(null, "", href)
+    window.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })
+  }
+
+  const navigate = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    const href = event.currentTarget.hash || "#"
+    if (open) {
+      pendingSection.current = href
+      setOpen(false)
+    } else {
+      scrollToSection(href)
+    }
+  }
 
   useEffect(() => {
     const onScroll = () => {
@@ -28,6 +50,7 @@ export function Navbar() {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0)
     }
+    onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
@@ -39,7 +62,7 @@ export function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
+        scrolled || open
           ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
           : "bg-transparent"
       )}
@@ -56,6 +79,7 @@ export function Navbar() {
         <div className="flex h-[4.75rem] items-center justify-between sm:h-20">
           <motion.a
             href="#"
+            onClick={navigate}
             aria-label="Tradeline Logistic, inicio"
             className={cn(
               "group flex items-center rounded-lg border p-1 shadow-lg transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:ring-offset-2",
@@ -79,6 +103,7 @@ export function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
+                onClick={navigate}
                 className={cn(
                   "text-sm font-medium transition-colors hover:text-brand-600 relative after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-0.5 after:bg-brand-500 after:scale-x-0 after:origin-left after:transition-transform hover:after:scale-x-100",
                   scrolled ? "text-gray-600" : "text-white/80"
@@ -91,9 +116,9 @@ export function Navbar() {
               <a href="#tracking" className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors hover:scale-105", scrolled ? "border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100" : "border-white/35 bg-white/10 text-white hover:bg-white/20")}>
                 {quickActions[0]}
               </a>
-              <button type="button" disabled title="Tarifario: próximamente" className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-75", scrolled ? "border-brand-200 bg-brand-50 text-brand-700" : "border-white/35 bg-white/10 text-white")}>
+              <a href="#contact" onClick={navigate} title="Solicitar tarifas" className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold", scrolled ? "border-brand-200 bg-brand-50 text-brand-700" : "border-white/35 bg-white/10 text-white")}>
                 {quickActions[1]}
-              </button>
+              </a>
             </div>
             <a
               href="#contact"
@@ -116,7 +141,7 @@ export function Navbar() {
             aria-controls="mobile-navigation"
             className={cn(
               "xl:hidden flex h-11 w-11 items-center justify-center rounded-lg",
-              scrolled ? "text-gray-900" : "text-white"
+              scrolled || open ? "text-gray-900" : "text-white"
             )}
           >
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -124,7 +149,12 @@ export function Navbar() {
         </div>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => {
+        if (pendingSection.current) {
+          scrollToSection(pendingSection.current)
+          pendingSection.current = null
+        }
+      }}>
         {open && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
@@ -133,28 +163,28 @@ export function Navbar() {
             id="mobile-navigation"
             className="xl:hidden bg-white border-t border-gray-200 overflow-hidden"
           >
-            <div className="max-h-[calc(100svh-4rem)] overflow-y-auto px-4 py-4 space-y-1">
+            <div className="max-h-[calc(100svh-5rem)] overflow-y-auto px-4 py-4 space-y-1">
               {links.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setOpen(false)}
+                  onClick={navigate}
                   className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-brand-600 transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
               <div className="grid grid-cols-2 gap-2 px-3 pt-2">
-                <a href="#tracking" onClick={() => setOpen(false)} className="flex min-h-11 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">
+                <a href="#tracking" onClick={navigate} className="flex min-h-11 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">
                   {quickActions[0]}
                 </a>
-                <button type="button" disabled title="Tarifario: próximamente" className="min-h-11 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 disabled:cursor-not-allowed">
+                <a href="#contact" onClick={navigate} title="Solicitar tarifas" className="flex min-h-11 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">
                   {quickActions[1]}
-                </button>
+                </a>
               </div>
               <a
                 href="#contact"
-                onClick={() => setOpen(false)}
+                onClick={navigate}
                 className="mt-3 block min-h-11 rounded-lg bg-brand-600 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
               >
                 Cotizar envío
